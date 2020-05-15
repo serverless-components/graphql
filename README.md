@@ -2,6 +2,8 @@
 
 This Serverless Framework Component is a specialized developer experience focused on making it easy to deploy and manage GraphQL applications on serverless infrastructure (specifically AWS AppSync and AWS Lambda) on your own AWS account. It comes loaded with powerful development features and represents possibly the easiest, cheapest and most scalable way to host GraphQL apps.
 
+<br/>
+
 - [x] **Never Pay For Idle** - No requests, no cost. Averages $0.0000002-$0.0000009 per request.
 - [x] **Zero Configuration** - All we need is your code, then just deploy (advanced config options are available).
 - [x] **Fast Deployments** - Deploy to the cloud in seconds.
@@ -10,6 +12,8 @@ This Serverless Framework Component is a specialized developer experience focuse
 - [ ] **Canary Deployments** - Deploy your app gradually to a subset of your traffic overtime.
 - [ ] **Custom Domain + SSL** - Auto-configure a custom domain w/ a free AWS ACM SSL certificate.
 - [ ] **Built-in Monitoring** - Monitor your GraphQL app right from the Serverless Dashboard.
+
+<br/>
 
 # Contents
 
@@ -121,10 +125,56 @@ url:    https://cnbfx5zutbe4fkrtsldsrunbuu.appsync-api.us-east-1.amazonaws.com/g
 
 # Configure
 
+The GraphQL component is a zero configuration component, meaning that it'll work out of the box with no configuration and sane defaults. With that said, there are still a lot of optional configuration that you can specify.
+
+Here's a complete reference of the `serverless.yml` file for the GraphQL component:
+
+```yml
+component: graphql               # (required) name of the component. In that case, it's graphql.
+name: graphql-api                # (required) name of your graphql component instance.
+org: serverlessinc               # (optional) serverless dashboard org. default is the first org you created during signup.
+app: myApp                       # (optional) serverless dashboard app. default is the same as the name property.
+stage: dev                       # (optional) serverless dashboard stage. default is dev.
+
+inputs:
+  src: ./                        # (optional) path to the source folder. default is a simple blogging app.
+  memory: 512                    # (optional) lambda memory size. default is 3008.
+  timeout: 10                    # (optional) lambda timeout. default is 300.
+  description: My Express App    # (optional) lambda description. default is en empty string.
+  env:                           # (optional) env vars. default is an empty object
+    TABLE: 'my-table'
+  policy:                        # (optionnal) policy statement to attach to the lambda/appsync role. default is a strict policy that only has access to invoke your lambda and create CloudWatch Logs
+    - Action: '*'
+      Effect: Allow
+      Resource: '*'
+  layers:                        # (optional) list of lambda layer arns to attach to your lambda function.
+    - arn:aws:first:layer
+    - arn:aws:second:layer
+  domain: api.serverless.com     # (optional) if the domain was registered via AWS Route53 on the account you are deploying to, it will automatically be set-up with your GraphQL AppSync API, as well as a free CDN & AWS ACM SSL Cert.
+  region: us-east-2              # (optional) aws region to deploy to. default is us-east-1.
+```
+
+Once you've chosen your configuration, run `serverless deploy` again (or simply just `serverless`) to deploy your changes.
+
+
 # Develop
+
+Now that you've got your basic express app up and running, it's time to develop that into a real world application. Instead of having to run `serverless deploy` everytime you make changes you wanna test, run `serverless dev`, which allows the CLI to watch for changes in your source directory as you develop, and deploy instantly on save. 
+
+To enable dev mode, simply run `serverless dev` from within the directory containing the `serverless.yml` file.
+
+Dev mode also enables live streaming logs from your express app so that you can see the results of your code changes right away on the CLI as they happen.
 
 # Monitor
 
+Anytime you need to know more about your running GraphQL instance, you can run `serverless info` to view the most critical info. This is especially helpful when you want to know the outputs of your instances so that you can reference them in another instance.
+
+It also shows you the status of your instance, when it was last deployed, how many times it was deployed, and the error message & stack if the latest deployment failed. To dig even deeper, you can pass the `--debug` flag to view the state object of your component instance. 
+
 # Remove
+
+If you wanna tear down your entire GraphQL infrastructure that was created during deployment, just run `serverless remove` in the directory containing the `serverless.yml` file. The GraphQL component will then use all the data it needs from the built-in state storage system to delete only the relavent cloud resources that it created.
+
+Just like deployment, you could also specify a `--debug` flag for realtime logs from the GraphQL component running in the cloud.
 
 # Guides
