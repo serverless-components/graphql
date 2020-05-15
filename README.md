@@ -225,7 +225,7 @@ To enable dev mode, simply run the following command from within the directory c
 serverless dev
 ```
 
-Dev mode also enables live streaming logs from your express app so that you can see the results of your code changes right away on the CLI as they happen.
+Dev mode also enables live streaming logs from your GraphQL app so that you can see the results of your code changes right away on the CLI as they happen.
 
 # Monitor
 
