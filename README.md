@@ -106,7 +106,7 @@ module.exports = { Query, Mutation }
 ```
 In this file, you simply export each of your schema types (ie. `Query` & `Mutation`) as an object of functions. Each function is a field resolver for that type.
 
-Needless to say, any resolver you define in `resolvers.js`, must also be defined in your schema in the `schema.graphql` file. Same goes for the resolvers inputs & outputs. Remember, GraphQL is strongly typed.
+**Both files are required**. Needless to say, any resolver you define in `resolvers.js`, must also be defined in your schema in the `schema.graphql` file, otherwise, you'll get an AppSync error. Same goes for the resolvers inputs & outputs. Remember, GraphQL is strongly typed by design.
 
 # Deploy
 
