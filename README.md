@@ -32,7 +32,7 @@ This Serverless Framework Component is a specialized developer experience focuse
 To get started with this component, install the latest version of the Serverless Framework:
 
 ```
-$ npm install -g serverless
+npm install -g serverless
 ```
 
 # Create
@@ -40,8 +40,8 @@ $ npm install -g serverless
 You can easily create a new GraphQL app just by using the following command and template url.
 
 ```
-$ serverless create --template-url https://github.com/serverless/components/tree/master/templates/graphql
-$ cd graphql
+serverless create --template-url https://github.com/serverless/components/tree/master/templates/graphql
+cd graphql
 ```
 
 Then, create a new `.env` file in the root of the `graphql` directory right next to `serverless.yml`, and add your AWS access keys:
@@ -122,7 +122,13 @@ In this file, you simply export each of your schema types (ie. `Query` & `Mutati
 
 # Deploy
 
-Once you have the directory set up, you're now ready to deploy. Just run `serverless deploy` from within the directory containing the `serverless.yml` file. Your first deployment might take a little while, but subsequent deployment would just take few seconds.
+Once you have the directory set up, you're now ready to deploy. Just run the following command from within the directory containing the `serverless.yml` file:
+
+```
+serverless deploy
+```
+
+Your first deployment might take a little while, but subsequent deployment would just take few seconds.
 
 After deployment is done, you should see your the following outputs:
 
@@ -133,7 +139,48 @@ apiId:  survbmoad5ewtnm3e3cd7qys4q
 url:    https://cnbfx5zutbe4fkrtsldsrunbuu.appsync-api.us-east-1.amazonaws.com/graphql
 ```
 
+Your GraphQL API is now deployed! Next time you deploy, if you'd like to know what's happening under the hood and see realtime logs, you can pass the `--debug` flag:
+
+```
+serverless deploy --debug
+```
+
 # Query
+
+You can query and test your newly created GraphQL API directly with the AWS AppSync console, or any HTTP client. 
+
+Here's an example using `fetch` or `node-fetch` with the example above:
+
+```js
+// you can get the url and apiKey values from the deployment outputs
+const url = 'https://cnbfx5zutbe4fkrtsldsrunbuu.appsync-api.us-east-1.amazonaws.com/graphql'
+const apiKey = 'da2-yf444kxlhjerxl376jxyafb2rq'
+
+fetch(url, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': apiKey // the "x-api-key" header is required by AppSync
+  },
+  body: JSON.stringify({
+    query: `query getPost { getPost(id: "123") { id }}`
+  })
+})
+  .then((res) => res.text())
+  .then((post) => console.log(post))
+```
+
+The response should echo back the post id, something like this:
+
+```
+{
+  "data": {
+    "getPost": {
+      "id": "123"
+    }
+  }
+}
+```
 
 # Configure
 
@@ -171,22 +218,46 @@ Once you've chosen your configuration, run `serverless deploy` again (or simply 
 
 # Develop
 
-Now that you've got your basic express app up and running, it's time to develop that into a real world application. Instead of having to run `serverless deploy` everytime you make changes you wanna test, run `serverless dev`, which allows the CLI to watch for changes in your source directory as you develop, and deploy instantly on save. 
+Now that you've got your basic GraphQL app up and running, it's time to develop that into a real world application. Instead of having to run `serverless deploy` everytime you make changes you wanna test, you can enable **dev mode**, which allows the CLI to watch for changes in your source directory as you develop, and deploy instantly on save. 
 
-To enable dev mode, simply run `serverless dev` from within the directory containing the `serverless.yml` file.
+To enable dev mode, simply run the following command from within the directory containing the `serverless.yml` file:
+
+```
+serverless dev
+```
 
 Dev mode also enables live streaming logs from your express app so that you can see the results of your code changes right away on the CLI as they happen.
 
 # Monitor
 
-Anytime you need to know more about your running GraphQL instance, you can run `serverless info` to view the most critical info. This is especially helpful when you want to know the outputs of your instances so that you can reference them in another instance.
+Anytime you need to know more about your running GraphQL instance, you can run the following command to view the most critical info:
 
-It also shows you the status of your instance, when it was last deployed, how many times it was deployed, and the error message & stack if the latest deployment failed. To dig even deeper, you can pass the `--debug` flag to view the state object of your component instance. 
+```
+serverless info
+```
+
+This is especially helpful when you want to know the outputs of your instances so that you can reference them in another instance. It also shows you the status of your instance, when it was last deployed, how many times it was deployed, and the error message & stack if the latest deployment failed.
+
+To dig even deeper, you can pass the `--debug` flag to view the state object of your component instance:
+
+```
+serverless info --debug
+```
 
 # Remove
 
-If you wanna tear down your entire GraphQL infrastructure that was created during deployment, just run `serverless remove` in the directory containing the `serverless.yml` file. The GraphQL component will then use all the data it needs from the built-in state storage system to delete only the relavent cloud resources that it created.
+If you wanna tear down your entire GraphQL infrastructure that was created during deployment, just run the following command in the directory containing the `serverless.yml` file:
 
-Just like deployment, you could also specify a `--debug` flag for realtime logs from the GraphQL component running in the cloud.
+```
+serverless remove
+```
+
+The GraphQL component will then use all the data it needs from the built-in state storage system to delete only the relavent cloud resources that it created.
+
+Just like deployment, you could also specify a `--debug` flag for realtime logs from the GraphQL component running in the cloud:
+
+```
+serverless remove --debug
+```
 
 # Guides
