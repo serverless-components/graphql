@@ -258,3 +258,9 @@ Just like deployment, you could also specify a `--debug` flag for realtime logs 
 ```
 serverless remove --debug
 ```
+
+# FAQs
+
+## How do I add NPM packages to the resolvers?
+
+You can run `npm init` & `npm install` as you normally would in the directory containing the `resolvers.js` file. This is the root of your app. This entire directory is uploaded to your Lambda function, and you can structure it however you want. Just make sure `resolvers.js` and `schema.graphql` are in the root of the directory.
