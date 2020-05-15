@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "jest": "^25.1.0",
+    "babel-eslint": "9.0.0",
+    "eslint": "5.6.0",
+    "eslint-config-prettier": "^3.6.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "@serverless/aws-sdk": "^2.0.2"
+  }
+}
