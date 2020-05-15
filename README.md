@@ -25,7 +25,6 @@ This Serverless Framework Component is a specialized developer experience focuse
 - [**Develop**](#develop)
 - [**Montior**](#monitor)
 - [**Remove**](#remove)
-- [**Guides**](#guides)
 
 # Install
 
@@ -259,5 +258,3 @@ Just like deployment, you could also specify a `--debug` flag for realtime logs 
 ```
 serverless remove --debug
 ```
-
-# Guides
