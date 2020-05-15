@@ -71,7 +71,7 @@ inputs:
   src: ./
 ```
 
-You can find more configuration options for the `serverless.yml` file below.
+For more configuration options for the `serverless.yml` file, [check out the Configure section](#configure) below.
 
 The `schema.graphql` is where you define your GraphQL schema. It looks something like this:
 
