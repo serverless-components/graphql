@@ -114,7 +114,7 @@ Once you have the directory set up, you're now ready to deploy. Just run `server
 
 After deployment is done, you should see your the following outputs:
 
-```
+```yml
 name:   component-test-2-pxzaf135
 apiKey: da2-yf444kxlhjerxl376jxyafb2rq
 apiId:  survbmoad5ewtnm3e3cd7qys4q
