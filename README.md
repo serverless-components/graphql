@@ -9,7 +9,7 @@ This Serverless Framework Component is a specialized developer experience focuse
 - [x] **Team Collaboration** - Collaborate with your teamates with shared state and outputs.
 - [ ] **Canary Deployments** - Deploy your app gradually to a subset of your traffic overtime.
 - [ ] **Custom Domain + SSL** - Auto-configure a custom domain w/ a free AWS ACM SSL certificate.
-- [ ] **Built-in Monitoring** - Monitor your express app right from the Serverless Dashboard.
+- [ ] **Built-in Monitoring** - Monitor your GraphQL app right from the Serverless Dashboard.
 
 # Contents
 
