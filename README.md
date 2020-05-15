@@ -165,7 +165,7 @@ fetch(url, {
     query: `query getPost { getPost(id: "123") { id }}`
   })
 })
-  .then((res) => res.text())
+  .then((res) => res.json())
   .then((post) => console.log(post))
 ```
 
