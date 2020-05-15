@@ -61,6 +61,18 @@ You should now have a directory that looks something like this:
 |- schema.graphql
 ```
 
+The `serverless.yml` file is where you define your component config. It looks something like this:
+
+```yml
+component: graphql
+name: graphql-api
+
+inputs:
+  src: ./
+```
+
+You can find more configuration options for the `serverless.yml` file below.
+
 The `schema.graphql` is where you define your GraphQL schema. It looks something like this:
 
 ```graphql
@@ -82,7 +94,7 @@ schema {
 }
 ```
 
-While the `resolvers.js` file is where you define your schema resolvers. It looks something like this:
+The `resolvers.js` file is where you define your schema resolvers. It looks something like this:
 
 
 ```js
@@ -106,7 +118,7 @@ module.exports = { Query, Mutation }
 ```
 In this file, you simply export each of your schema types (ie. `Query` & `Mutation`) as an object of functions. Each function is a field resolver for that type.
 
-**Both files are required**. Needless to say, any resolver you define in `resolvers.js`, must also be defined in your schema in the `schema.graphql` file, otherwise, you'll get an AppSync error. Same goes for the resolvers inputs & outputs. Remember, GraphQL is strongly typed by design.
+**All these files are required**. Needless to say, any resolver you define in `resolvers.js`, must also be defined in your schema in the `schema.graphql` file, otherwise, you'll get an AppSync error. Same goes for the resolvers inputs & outputs. Remember, GraphQL is strongly typed by design.
 
 # Deploy
 
