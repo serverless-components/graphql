@@ -148,7 +148,7 @@ serverless deploy --debug
 
 You can query and test your newly created GraphQL API directly with the AWS AppSync console, or any HTTP client. 
 
-Here's an example using `fetch` or `node-fetch` with the example above:
+Here's a snippet using `fetch` or `node-fetch` with the example above:
 
 ```js
 // you can get the url and apiKey values from the deployment outputs
