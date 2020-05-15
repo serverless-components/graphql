@@ -57,8 +57,8 @@ You should now have a directory that looks something like this:
 ```
 |- serverless.yml
 |- .env
-|- resolvers.js
 |- schema.graphql
+|- resolvers.js
 ```
 
 The `serverless.yml` file is where you define your component config. It looks something like this:
