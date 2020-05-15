@@ -169,7 +169,7 @@ fetch(url, {
   .then((post) => console.log(post))
 ```
 
-The response should echo back the post id, something like this:
+The response should be an echo of the post id, something like this:
 
 ```
 {
