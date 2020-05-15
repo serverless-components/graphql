@@ -140,7 +140,7 @@ inputs:
   src: ./                        # (optional) path to the source folder. default is a simple blogging app.
   memory: 512                    # (optional) lambda memory size. default is 3008.
   timeout: 10                    # (optional) lambda timeout. default is 300.
-  description: My Express App    # (optional) lambda description. default is en empty string.
+  description: My GraphQL App    # (optional) lambda description. default is en empty string.
   env:                           # (optional) env vars. default is an empty object
     TABLE: 'my-table'
   policy:                        # (optionnal) policy statement to attach to the lambda/appsync role. default is a strict policy that only has access to invoke your lambda and create CloudWatch Logs
