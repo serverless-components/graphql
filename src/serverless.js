@@ -21,6 +21,12 @@ const log = (msg) => console.log(msg) // eslint-disable-line
 
 class GraphQL extends Component {
   async deploy(inputs = {}) {
+    // this error message assumes that the user is running via the CLI though...
+    if (Object.keys(this.credentials.aws).length === 0) {
+      const msg = `Credentials not found. Make sure you have a .env file in the cwd. - Docs: https://git.io/JvArp`
+      throw new Error(msg)
+    }
+
     inputs.region = inputs.region || 'us-east-1'
     inputs.name = inputs.name || this.name
 
@@ -29,11 +35,25 @@ class GraphQL extends Component {
       region: inputs.region
     })
 
-    if (!inputs.src) {
-      throw new Error(`The "src" input is required.`)
-    }
-
     const sourceDirectory = await this.unzip(inputs.src)
+
+    // add default app if src is not provided
+    if (!inputs.src) {
+      fs.copyFileSync(
+        path.join(__dirname, '_src', 'resolvers.js'),
+        path.join(sourceDirectory, 'resolvers.js')
+      )
+
+      fs.copyFileSync(
+        path.join(__dirname, '_src', 'schema.graphql'),
+        path.join(sourceDirectory, 'schema.graphql')
+      )
+
+      fs.copyFileSync(
+        path.join(__dirname, '_src', 'serverless.yml'),
+        path.join(sourceDirectory, 'serverless.yml')
+      )
+    }
 
     const schemaFilePath = path.join(sourceDirectory, 'schema.graphql')
     const resolversFilePath = path.join(sourceDirectory, 'resolvers.js')
@@ -64,13 +84,13 @@ class GraphQL extends Component {
     this.state.name = this.state.name || `${inputs.name}-${generateId()}`
 
     log(`Deploying GraphQL API "${this.state.name}" to the "${this.state.region}" region.`)
-
     const getLambdaArnParams = {
       lambdaName: this.state.name
     }
 
     const lambdaArnForPolicy = await aws.utils.getLambdaArn(getLambdaArnParams)
 
+    log(`Deploying Role "${this.state.name}" to the "${this.state.region}" region.`)
     const deployRoleParams = {
       roleName: this.state.name,
       service: [`lambda.amazonaws.com`, `appsync.amazonaws.com`],
@@ -96,10 +116,9 @@ class GraphQL extends Component {
     if (inputs.policy instanceof Array) {
       deployRoleParams.policy = deployRoleParams.policy.concat(inputs.policy)
     }
-
-    log(`Deploying Role "${this.state.name}" to the "${this.state.region}" region.`)
     const { roleArn } = await aws.utils.deployRole(deployRoleParams)
 
+    log(`Deploying Lambda "${this.state.name}" to the "${this.state.region}" region.`)
     const deployLambdaParams = {
       lambdaName: this.state.name,
       description: inputs.description,
@@ -107,13 +126,13 @@ class GraphQL extends Component {
       memory: inputs.memory,
       timeout: inputs.timeout,
       env: inputs.env,
+      layers: inputs.layers,
       roleArn,
       lambdaSrc: zipPath
     }
-
-    log(`Deploying Lambda "${this.state.name}" to the "${this.state.region}" region.`)
     const { lambdaArn } = await aws.utils.deployLambda(deployLambdaParams)
 
+    log(`Deploying AppSync API "${this.state.name}" to the "${this.state.region}" region.`)
     const deployAppSyncApiParams = {
       apiName: this.state.name
     }
@@ -122,51 +141,45 @@ class GraphQL extends Component {
       deployAppSyncApiParams.apiId = this.state.apiId
     }
 
-    log(`Deploying AppSync API "${this.state.name}" to the "${this.state.region}" region.`)
     const { apiId, apiUrls } = await aws.utils.deployAppSyncApi(deployAppSyncApiParams)
-
     this.state.apiId = apiId
     this.state.apiUrls = apiUrls
 
+    log(`Deploying schema for AppSync API with ID "${apiId}".`)
     const deployAppSyncSchemaParams = {
       apiId,
       schema
     }
-
-    log(`Deploying schema for AppSync API with ID "${apiId}".`)
     await aws.utils.deployAppSyncSchema(deployAppSyncSchemaParams)
 
+    log(`Deploying Lambda data source for AppSync API with ID "${apiId}".`)
     const deployAppSyncDataSourcesParams = {
       dataSourceName: `BuiltInLambdaDataSource`,
       apiId,
       lambdaArn,
       roleArn
     }
-
-    log(`Deploying Lambda data source for AppSync API with ID "${apiId}".`)
     await aws.utils.deployAppSyncDataSource(deployAppSyncDataSourcesParams)
 
+    log(`Deploying resolvers for AppSync API with ID "${apiId}".`)
     const deployAppSyncResolversParams = {
       dataSourceName: 'BuiltInLambdaDataSource',
       apiId,
       resolvers
     }
-
-    log(`Deploying resolvers for AppSync API with ID "${apiId}".`)
     await aws.utils.deployAppSyncResolvers(deployAppSyncResolversParams)
 
-    // todo what if the api key was removed from the aws console?
-    if (!this.state.apiKey) {
-      const createAppSyncApiKeyParams = {
-        apiId,
-        description: inputs.description
-      }
-
-      log(`Deploying api key for AppSync API with ID "${apiId}".`)
-      const { apiKey } = await aws.utils.createAppSyncApiKey(createAppSyncApiKeyParams)
-
-      this.state.apiKey = apiKey
+    log(`Deploying api key for AppSync API with ID "${apiId}".`)
+    // if api key not in state, a new one will be created
+    // if it is in state, it will be verified on the provider
+    // and a new one will be created if no longer exists
+    const deployAppSyncApiKeyParams = {
+      apiId,
+      apiKey: this.state.apiKey,
+      description: inputs.description
     }
+    const { apiKey } = await aws.utils.deployAppSyncApiKey(deployAppSyncApiKeyParams)
+    this.state.apiKey = apiKey
 
     log(
       `GraphQL API ${this.state.name} was successfully deployed to the "${this.state.region}" region.`

@@ -21,7 +21,7 @@ module.exports.handler = async (event) => {
   const { parentTypeName, fieldName } = event.info
 
   // these validation errors will likely never run because they're covered
-  // by component validation but leaving them just in case
+  // by component validation. But I'm leaving them just in case
   if (!resolvers[parentTypeName]) {
     throw new Error(`The "${parentTypeName}" type is not exported in resolvers.js`)
   }
@@ -36,6 +36,6 @@ module.exports.handler = async (event) => {
     throw new Error(`Resolver "${fieldName}" for type "${parentTypeName}" must be a function`)
   }
 
-  // todo how does variables work in graphql?
+  // todo how do variables work in graphql?
   return resolvers[parentTypeName][fieldName](event.arguments, event)
 }
