@@ -25,6 +25,7 @@ This Serverless Framework Component is a specialized developer experience focuse
 - [**Develop**](#develop)
 - [**Monitor**](#monitor)
 - [**Remove**](#remove)
+- [**FAQs**](#faqs)
 
 # Install
 
