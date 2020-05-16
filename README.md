@@ -133,7 +133,7 @@ Your first deployment might take a little while, but subsequent deployment would
 After deployment is done, you should see your the following outputs:
 
 ```yml
-name:   component-test-2-pxzaf135
+name:   graphql-api-pxzaf135
 apiKey: da2-yf444kxlhjerxl376jxyafb2rq
 apiId:  survbmoad5ewtnm3e3cd7qys4q
 url:    https://cnbfx5zutbe4fkrtsldsrunbuu.appsync-api.us-east-1.amazonaws.com/graphql
