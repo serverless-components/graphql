@@ -8,7 +8,7 @@ This Serverless Framework Component is a specialized developer experience focuse
 - [x] **Zero Configuration** - All we need is your code, then just deploy (advanced config options are available).
 - [x] **Fast Deployments** - Deploy to the cloud in seconds.
 - [x] **Realtime Logging** - Rapidly develop on the cloud w/ real-time logs and errors in the CLI.
-- [x] **Team Collaboration** - Collaborate with your teamates with shared state and outputs.
+- [x] **Team Collaboration** - Collaborate with your teammates with shared state and outputs.
 - [ ] **Canary Deployments** - Deploy your app gradually to a subset of your traffic overtime.
 - [ ] **Custom Domain + SSL** - Auto-configure a custom domain w/ a free AWS ACM SSL certificate.
 - [ ] **Built-in Monitoring** - Monitor your GraphQL app right from the Serverless Dashboard.
