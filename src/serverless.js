@@ -39,6 +39,10 @@ class GraphQL extends Component {
 
     // add default app if src is not provided
     if (!inputs.src) {
+      // make sure source directory exists
+      if (!fs.existsSync(sourceDirectory)) {
+        fs.mkdirSync(sourceDirectory)
+      }
       fs.copyFileSync(
         path.join(__dirname, '_src', 'resolvers.js'),
         path.join(sourceDirectory, 'resolvers.js')
