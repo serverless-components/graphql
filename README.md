@@ -172,7 +172,7 @@ fetch(url, {
 
 The response should be an echo of the post id, something like this:
 
-```
+```json
 {
   "data": {
     "getPost": {
