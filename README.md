@@ -26,7 +26,7 @@ This Serverless Framework Component is a specialized developer experience focuse
 - [**Configuration Reference**](#configuration-reference)
   - [**Lambda Configuration**](#lambda-resolvers)
   - [**Custom Domain**](#custom-domain)
-  - [**Custom Policies**](#custom-policies)
+  - [**Custom IAM Policies**](#custom-iam-policies)
   - [**Authorization**](#authorization)
   - [**Resolvers and Data Sources**](#resolvers-and-data-sources)
 - [**CLI Reference**](#cli-reference)
@@ -234,7 +234,7 @@ inputs:
 If you've purchased your domain from AWS Route53, you can configure the domain with a single input:
 
 ```yml
-inputs
+inputs:
   src: ./
   domain: example.com
 ```
@@ -242,7 +242,7 @@ inputs
 Subdomains work too:
 
 ```yml
-inputs
+inputs:
   src: ./
   domain: api.example.com
 ```
@@ -305,54 +305,59 @@ inputs:
 
 ## Resolvers and Data Sources
 
-If you'd like to use your own Lambda data source, you could specify your resolvers as an input instead of a `resolvers.js` file, and point to your Lambda function. Here's an example resolver:
+If you'd like to setup your resolvers to use your own existing data sources, you could specify your resolvers as a `serverless.yml` input instead of inside a `resolvers.js` file. In that case, you'll need to also specify your own `request` and `response` templates. You could do that directly in `serverless.yml`, or by pointing to a `vtl` file inside of your `src` directory.
+
+Here's an example:
 
 ```yml
 inputs:
+  src: ./
   resolvers:
     Query:                          # this must be a valid type in your schema
       getPost:                      # this must be a valid resolver in your schmea
-        lambda: my-lambda           # name of the lambda function you'd like to use as a data source for this resolver
+        lambda: my-lambda           # this will set up the my-lambda Lambda as a data source for this resolver
         request: >                  # the request VTL template for this resolver.
           { "version": "2017-02-28", "operation": "Invoke", "payload": $util.toJson($context)  }
         response: response.vtl      # you could also point to a VTL file relative to your src directory.
-
 ```
+
+This `request` and `response` properties are required regardless of which data source you are working with. [Check out the official AWS docs for more information on the syntax for each data source](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html).
+
+Below is a reference of all the supported data sources and their configuration. Don't forget to add the request/response templates as shown above.
+
+## Lambda Resolvers
+
+```yml
+inputs:
+  src: ./
+  resolvers:
+    Query:                          
+      getPost:                      
+        lambda: my-lambda
+```
+
 
 ## DynamoDB Resolvers
 
-If you don't need a Lambda at all and would like to connect DynamoDB data source directly to AppSync, you could instead specify the `table` property in your resolver config:
-
 ```yml
 inputs:
   src: ./src
   resolvers:
-    Query:                          # this must be a valid type in your schema
-      getPost:                      # this must be a valid resolver in your schmea
-        table: my-table             # name of the dynamodb table you'd like to use as a data source for this resolver
-        request: request.vtl        # the request VTL template file for this resolver.
-        response: response.vtl      # the request VTL template file for this resolver.
+    Query:                          
+      getPost:                      
+        table: my-table
 ```
-
-Because the DynamoDB data source usually require relatively complex VTL templates, we are referncing `request.vtl` and `response.vtl` files in this example. Keep in mind that these references are relative to the `src` input. So in this example, these files live right next to the `schema.graphql` file.
 
 ## ElasticSearch Resolvers
 
-ElasticSearch resolvers are also supported. All you have to do is specify your `endpoint` and the required VTL templates:
-
 ```yml
 inputs:
   src: ./src
   resolvers:
-    Query:                          # this must be a valid type in your schema
-      getPost:                      # this must be a valid resolver in your schmea
-        endpoint: >                 # the endpoint of your elastic search cluster
-          https://search-my-sample-data-abbaabba.us-east-1.es.amazonaws.com
-        request: request.vtl        # the request VTL template file for this resolver.
-        response: response.vtl      # the request VTL template file for this resolver.
+    Query: 
+      getPost:
+        endpoint: https://search-my-sample-data-abbaabba.us-east-1.es.amazonaws.com
 ```
-
-As usual, you'll have to specify VTL templates according to your elastic search setup.
 
 ## Relational Database Resolvers
 
@@ -362,22 +367,11 @@ inputs:
   resolvers:
     Query:    
       getPost: 
-        dbClusterIdentifier: >   
-          arn:aws:rds:us-east-1:123456789123:cluster:my-serverless-aurora-postgres-1
-        awsSecretStoreArn: >
-          arn:aws:secretsmanager:us-east-1:123456789123:secret:rds-db-credentials/cluster-ABCDEFGHI/admin-aBc1e2
+        dbClusterIdentifier: arn:aws:rds:us-east-1:123456789123:cluster:my-serverless-aurora-postgres-1
+        awsSecretStoreArn: arn:aws:secretsmanager:us-east-1:123456789123:secret:rds-db-credentials/cluster-ABCDEFGHI/admin-aBc1e2
         databaseName: my-database
         schema: public
-        request: request.vtl
-        response: response.vtl
 ```
-
-## IAM Authorization
-
-## Cognito Authorization
-
-## OpenId Authorization
-
 
 # CLI Reference
 
