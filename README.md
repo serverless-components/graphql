@@ -264,9 +264,7 @@ inputs:
       Resource: '*'
 ```
 
-This policy applies to both the built-in Lambda function and the AppSync API.
-
-Keep in mind that this component automatically adds the required IAM policies to invoke your data source depending on your configuration.
+This policy applies to both the built-in Lambda function and the AppSync API. Keep in mind that this component automatically adds the required IAM policies to invoke your data source depending on your configuration.
 
 ## Authorization
 
