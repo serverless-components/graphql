@@ -356,7 +356,7 @@ inputs:
               "operation" : "PutItem",
               "key" : {
                   "id" : $util.dynamodb.toDynamoDBJson($context.arguments.id)
-              },
+              }
           }
         response: '$util.toJson($context.result)'
 ```
