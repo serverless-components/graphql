@@ -28,7 +28,7 @@ This Serverless Framework Component is a specialized developer experience focuse
   - [**Custom Domain**](#custom-domain)
   - [**Custom IAM Policies**](#custom-iam-policies)
   - [**Authorization**](#authorization)
-  - [**Data Sources Resolvers**](#=data-sources-resolvers)
+  - [**Data Sources Resolvers**](#data-sources-resolvers)
 - [**CLI Reference**](#cli-reference)
 - [**Outputs Reference**](#outputs-reference)
 - [**FAQs**](#faqs)
