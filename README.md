@@ -341,7 +341,7 @@ inputs:
 
 ```yml
 inputs:
-  src: ./src
+  src: ./
   resolvers:
     Query:                          
       getPost:                      
@@ -352,7 +352,7 @@ inputs:
 
 ```yml
 inputs:
-  src: ./src
+  src: ./
   resolvers:
     Query: 
       getPost:
@@ -363,7 +363,7 @@ inputs:
 
 ```yml          
 inputs:
-  src: ./src
+  src: ./
   resolvers:
     Query:    
       getPost: 
