@@ -272,15 +272,15 @@ Keep in mind that this component automatically adds the required IAM policies to
 
 This component uses `apiKey` authorization by default. However all other AppSync authorization options are available via the `auth` input.
 
-If you'd like to setup `IAM` authorization:
+`IAM` authorization:
 
 ```yml
 inputs:
   src: ./
-  auth: IAM
+  auth: iam
 ```
 
-For `Cognito`:
+`Cognito` authorization:
 
 ```yml
 inputs:
@@ -292,7 +292,7 @@ inputs:
     appIdClientRegex: qwertyuiop
 ```
 
-Finally, for `OpenID`:
+`OpenID` authorization:
 
 ```yml
 inputs:
