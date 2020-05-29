@@ -28,7 +28,7 @@ This Serverless Framework Component is a specialized developer experience focuse
   - [**Custom Domain**](#custom-domain)
   - [**Custom Policies**](#custom-policies)
   - [**Authorization**](#authorization)
-  - [**Resolvers & Data Sources**](#resolvers-data-sources)
+  - [**Resolvers and Data Sources**](#resolvers-and-data-sources)
 - [**CLI Reference**](#cli-reference)
 - [**Outputs Reference**](#outputs-reference)
 - [**FAQs**](#faqs)
@@ -301,7 +301,7 @@ inputs:
     iatTTL: 0
 ```
 
-## Resolvers & Data Sources
+## Resolvers and Data Sources
 
 If you'd like to use your own Lambda data source, you could specify your resolvers as an input instead of a `resolvers.js` file, and point to your Lambda function. Here's an example resolver:
 
