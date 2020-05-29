@@ -296,6 +296,7 @@ inputs:
 
 ```yml
 inputs:
+  src: ./
   auth:
     issuer: qwertyuiop
     authTTL: 0
