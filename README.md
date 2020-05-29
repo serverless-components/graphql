@@ -31,10 +31,7 @@ This Serverless Framework Component is a specialized developer experience focuse
   - [**Resolvers & Data Sources**](#elasticsearch-resolvers)
   - [**Outputs Reference**](#elasticsearch-resolvers)
 - [**CLI Reference**](#cli-reference)
-  - [**deploy**](#deploy)
-  - [**dev (dev mode)**](#dev)
-  - [**info**](#lambda-resolvers)
-  - [**remove**](#dynamodb-resolvers)
+- [**Outputs Reference**](#outputs-reference)
 - [**FAQs**](#faqs)
 
 # Quick Start
@@ -368,6 +365,8 @@ Just like deployment, you could also specify a `--debug` flag for realtime logs 
 ```
 serverless remove --debug
 ```
+
+# Outputs Reference
 
 # FAQs
 
