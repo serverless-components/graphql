@@ -323,7 +323,7 @@ inputs:
         response: response.vtl      # you could also point to a VTL file relative to your src directory.
 ```
 
-This `request` and `response` properties are required regardless of which data source you are working with. [Check out the official AWS docs for more information on the required syntax for each data source.](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html).
+This `request` and `response` properties are required regardless of which data source you are working with. Check out the [official AWS docs](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html) for more information on the required syntax for each data source.
 
 Below is a reference of all the supported data sources and their configuration. Don't forget to add the request/response templates as shown above.
 
