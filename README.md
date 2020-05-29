@@ -18,25 +18,28 @@ This Serverless Framework Component is a specialized developer experience focuse
 
 # Contents
 
-- [**Install**](#install)
-- [**Create**](#create)
-- [**Deploy**](#deploy)
-- [**Query**](#query)
-- [**Configure**](#configure)
-  - [**Lambda Resolvers**](#lambda-resolvers)
-  - [**DynamoDB Resolvers**](#dynamodb-resolvers)
-  - [**ElasticSearch Resolvers**](#elasticsearch-resolvers)
-  - [**Relational Database Resolvers**](#relational-database-resolvers)
-  - [**HTTP Resolvers**](#http-resolvers)
-  - [**IAM Authorization**](#iam-authorization)
-  - [**Cognito Authorization**](#cognito-authorization)
-  - [**OpenID Authorization**](#openid-authorization)
-- [**Develop**](#develop)
-- [**Monitor**](#monitor)
-- [**Remove**](#remove)
+- [**Quick Start**](#quick-start)
+  - [**Install**](#install)
+  - [**Create**](#create)
+  - [**Deploy**](#deploy)
+  - [**Query**](#query)
+- [**Configuration Reference**](#configuration-reference)
+  - [**Lambda Configuration**](#lambda-resolvers)
+  - [**Custom Domain**](#lambda-resolvers)
+  - [**Custom Policies**](#lambda-resolvers)
+  - [**Authorization**](#dynamodb-resolvers)
+  - [**Resolvers & Data Sources**](#elasticsearch-resolvers)
+  - [**Outputs Reference**](#elasticsearch-resolvers)
+- [**CLI Reference**](#cli-reference)
+  - [**deploy**](#deploy)
+  - [**dev (dev mode)**](#dev)
+  - [**info**](#lambda-resolvers)
+  - [**remove**](#dynamodb-resolvers)
 - [**FAQs**](#faqs)
 
-# Install
+# Quick Start
+
+## Install
 
 To get started with this component, install the latest version of the Serverless Framework:
 
@@ -44,7 +47,7 @@ To get started with this component, install the latest version of the Serverless
 npm install -g serverless
 ```
 
-# Create
+## Create
 
 You can easily create a new GraphQL app just by using the following command and template url.
 
@@ -129,7 +132,7 @@ In this file, you simply export each of your schema types (ie. `Query` & `Mutati
 
 **All these files are required**. Needless to say, any resolver you define in `resolvers.js`, must also be defined in your schema in the `schema.graphql` file, otherwise, you'll get an AppSync error. Same goes for the resolvers inputs & outputs. Remember, GraphQL is strongly typed by design.
 
-# Deploy
+## Deploy
 
 Once you have the directory set up, you're now ready to deploy. Just run the following command from within the directory containing the `serverless.yml` file:
 
@@ -154,7 +157,7 @@ Your GraphQL API is now deployed! Next time you deploy, if you'd like to know wh
 serverless deploy --debug
 ```
 
-# Query
+## Query
 
 You can query and test your newly created GraphQL API directly with the AWS AppSync console, or any HTTP client. 
 
@@ -191,7 +194,7 @@ The response should be an echo of the post id, something like this:
 }
 ```
 
-# Configure
+# Configuration Reference
 
 The GraphQL component is a zero configuration component, meaning that it'll work out of the box with no configuration and sane defaults. With that said, there are still a lot of optional configuration that you can specify.
 
@@ -295,7 +298,21 @@ As usual, you'll have to specify VTL templates according to your elastic search 
 
 ## Relational Database Resolvers
 
-## HTTP Resolvers
+```yml          
+inputs:
+  src: ./src
+  resolvers:
+    Query:    
+      getPost: 
+        dbClusterIdentifier: >   
+          arn:aws:rds:us-east-1:123456789123:cluster:my-serverless-aurora-postgres-1
+        awsSecretStoreArn: >
+          arn:aws:secretsmanager:us-east-1:123456789123:secret:rds-db-credentials/cluster-ABCDEFGHI/admin-aBc1e2
+        databaseName: my-database
+        schema: public
+        request: request.vtl
+        response: response.vtl
+```
 
 ## IAM Authorization
 
@@ -303,7 +320,12 @@ As usual, you'll have to specify VTL templates according to your elastic search 
 
 ## OpenId Authorization
 
-# Develop
+
+# CLI Reference
+
+## deploy
+
+## dev (dev mode)
 
 Now that you've got your basic GraphQL app up and running, it's time to develop that into a real world application. Instead of having to run `serverless deploy` everytime you make changes you wanna test, you can enable **dev mode**, which allows the CLI to watch for changes in your source directory as you develop, and deploy instantly on save. 
 
@@ -315,7 +337,7 @@ serverless dev
 
 Dev mode also enables live streaming logs from your GraphQL app so that you can see the results of your code changes right away on the CLI as they happen.
 
-# Monitor
+## info
 
 Anytime you need to know more about your running GraphQL instance, you can run the following command to view the most critical info:
 
@@ -331,7 +353,7 @@ To dig even deeper, you can pass the `--debug` flag to view the state object of 
 serverless info --debug
 ```
 
-# Remove
+## remove
 
 If you wanna tear down your entire GraphQL infrastructure that was created during deployment, just run the following command in the directory containing the `serverless.yml` file:
 
