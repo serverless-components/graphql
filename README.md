@@ -9,9 +9,10 @@ This Serverless Framework Component is a specialized developer experience focuse
 - [x] **Fast Deployments** - Deploy to the cloud in seconds.
 - [x] **Realtime Logging** - Rapidly develop on the cloud w/ real-time logs and errors in the CLI.
 - [x] **Team Collaboration** - Collaborate with your teammates with shared state and outputs.
-- [ ] **Canary Deployments** - Deploy your app gradually to a subset of your traffic overtime.
-- [ ] **Custom Domain + SSL** - Auto-configure a custom domain w/ a free AWS ACM SSL certificate.
-- [ ] **Built-in Monitoring** - Monitor your GraphQL app right from the Serverless Dashboard.
+- [x] **Custom Domain + SSL** - Auto-configure a custom domain w/ a free AWS ACM SSL certificate.
+- [x] **Lambda Default Resolver** - Automatically deploys your code to a lambda function for rapid query resolution.
+- [x] **Works with All Data Sources** - Can be configured to work with directly with DynamodDB, and other data sources.
+- [x] **Flexible Authorization Options** - Supports all AppSync authorization options, API Key, IAM, Cognito or OpenID auth.
 
 <br/>
 
@@ -22,6 +23,14 @@ This Serverless Framework Component is a specialized developer experience focuse
 - [**Deploy**](#deploy)
 - [**Query**](#query)
 - [**Configure**](#configure)
+  - [**Lambda Resolvers**](#lambda-resolvers)
+  - [**DynamoDB Resolvers**](#dynamodb-resolvers)
+  - [**ElasticSearch Resolvers**](#elasticsearch-resolvers)
+  - [**Relational Database Resolvers**](#relational-database-resolvers)
+  - [**HTTP Resolvers**](#http-resolvers)
+  - [**IAM Authorization**](#iam-authorization)
+  - [**Cognito Authorization**](#cognito-authorization)
+  - [**OpenID Authorization**](#openid-authorization)
 - [**Develop**](#develop)
 - [**Monitor**](#monitor)
 - [**Remove**](#remove)
@@ -214,7 +223,22 @@ inputs:
 ```
 
 Once you've chosen your configuration, run `serverless deploy` again (or simply just `serverless`) to deploy your changes.
+  
+## Lambda Resolvers
 
+## DynamoDB Resolvers
+
+## ElasticSearch Resolvers
+
+## Relational Database Resolvers
+
+## HTTP Resolvers
+
+## IAM Authorization
+
+## Cognito Authorization
+
+## OpenId Authorization
 
 # Develop
 
