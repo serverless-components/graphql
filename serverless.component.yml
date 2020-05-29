@@ -1,5 +1,5 @@
 name: graphql
-version: 1.0.1
+version: 2.0.1
 author: eahefnawy
 org: serverlessinc
 description: Create a GraphQL API with AWS AppSync
