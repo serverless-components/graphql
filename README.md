@@ -416,9 +416,22 @@ inputs:
 
 ## deploy
 
+To deploy, simply run `deploy` from within the directory containing the `serverless.yml` file:
+
+```
+serverless deploy
+```
+
+If you'd like to know what's happening under the hood and see realtime logs, you can pass the `--debug` flag:
+
+```
+serverless deploy --debug
+```
+
+
 ## dev (dev mode)
 
-Now that you've got your basic GraphQL app up and running, it's time to develop that into a real world application. Instead of having to run `serverless deploy` everytime you make changes you wanna test, you can enable **dev mode**, which allows the CLI to watch for changes in your source directory as you develop, and deploy instantly on save. 
+Instead of having to run `serverless deploy` everytime you make changes you wanna test, you can enable **dev mode**, which allows the CLI to watch for changes in your source directory as you develop, and deploy instantly on save. 
 
 To enable dev mode, simply run the following command from within the directory containing the `serverless.yml` file:
 
@@ -461,6 +474,13 @@ serverless remove --debug
 ```
 
 # Outputs Reference
+
+```yml
+name:   graphql-api-pxzaf135
+apiKey: da2-yf444kxlhjerxl376jxyafb2rq
+apiId:  survbmoad5ewtnm3e3cd7qys4q
+url:    https://cnbfx5zutbe4fkrtsldsrunbuu.appsync-api.us-east-1.amazonaws.com/graphql
+```
 
 # FAQs
 
