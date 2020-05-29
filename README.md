@@ -226,9 +226,72 @@ Once you've chosen your configuration, run `serverless deploy` again (or simply 
   
 ## Lambda Resolvers
 
+If you specify resolvers in a `resolvers.js` file as shown above, the component will deploy a lambda function automatically for you to host your resolvers and connect everything together. You can configure this default lambda function with the following inputs:
+
+```yml
+inputs:
+  memory: 512                    # (optional) lambda memory size. default is 3008.
+  timeout: 10                    # (optional) lambda timeout. default is 300.
+  description: My GraphQL App    # (optional) lambda description. default is en empty string.
+  env:                           # (optional) env vars. default is an empty object
+    TABLE: 'my-table'
+  policy:                        # (optionnal) policy statements to attach to the default lambda role. The default behavior is a strict policy that only has access to invoke your lambda and create CloudWatch Logs
+    - Action: '*'
+      Effect: Allow
+      Resource: '*'
+  layers:                        # (optional) list of lambda layer arns to attach to your lambda function.
+    - arn:aws:first:layer
+    - arn:aws:second:layer
+```
+
+If you'd like to use your own Lambda data source, you could specify your resolvers as an input instead of a `resolvers.js` file, and point to your Lambda function. Here's an example resolver:
+
+```yml
+inputs:
+  resolvers:
+    Query:                          # this must be a valid type in your schema
+      getPost:                      # this must be a valid resolver in your schmea
+        lambda: my-lambda           # name of the lambda function you'd like to use as a data source for this resolver
+        request: >                  # the request VTL template for this resolver.
+          { "version": "2017-02-28", "operation": "Invoke", "payload": $util.toJson($context)  }
+        response: response.vtl      # you could also point to a VTL file relative to your src directory.
+
+```
+
 ## DynamoDB Resolvers
 
+If you don't need a Lambda at all and would like to connect DynamoDB data source directly to AppSync, you could instead specify the `table` property in your resolver config:
+
+```yml
+inputs:
+  src: ./src
+  resolvers:
+    Query:                          # this must be a valid type in your schema
+      getPost:                      # this must be a valid resolver in your schmea
+        table: my-table             # name of the dynamodb table you'd like to use as a data source for this resolver
+        request: request.vtl        # the request VTL template file for this resolver.
+        response: response.vtl      # the request VTL template file for this resolver.
+```
+
+Because the DynamoDB data source usually require relatively complex VTL templates, we are referncing `request.vtl` and `response.vtl` files in this example. Keep in mind that these references are relative to the `src` input. So in this example, these files live right next to the `schema.graphql` file.
+
 ## ElasticSearch Resolvers
+
+ElasticSearch resolvers are also supported. All you have to do is specify your `endpoint` and the required VTL templates:
+
+```yml
+inputs:
+  src: ./src
+  resolvers:
+    Query:                          # this must be a valid type in your schema
+      getPost:                      # this must be a valid resolver in your schmea
+        endpoint: >                 # the endpoint of your elastic search cluster
+          https://search-my-sample-data-abbaabba.us-east-1.es.amazonaws.com
+        request: request.vtl        # the request VTL template file for this resolver.
+        response: response.vtl      # the request VTL template file for this resolver.
+```
+
+As usual, you'll have to specify VTL templates according to your elastic search setup.
 
 ## Relational Database Resolvers
 
