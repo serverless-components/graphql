@@ -381,7 +381,7 @@ inputs:
                   }
               }
           }
-         response: >
+        response: >
           [
               #foreach($entry in $context.result.hits.hits)
               #if( $velocityCount > 1 ) , #end
