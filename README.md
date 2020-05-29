@@ -208,7 +208,7 @@ inputs:
   region: us-east-2              # (optional) aws region to deploy to. default is us-east-1.
 ```
 
-Even the `src` input is optionl. If you didn't specify any `src` directory containing your code, an example app will be deployed for you.
+Even the `src` input is optional. If you didn't specify any `src` directory containing your code, an example app will be deployed for you.
 
 Keep reading to learn more about all the configuration options available to you.
   
@@ -218,15 +218,12 @@ If you specify resolvers in a `resolvers.js` file as shown in the quick start ab
 
 ```yml
 inputs:
+  src: ./
   memory: 512                    # (optional) lambda memory size. default is 3008.
   timeout: 10                    # (optional) lambda timeout. default is 300.
   description: My GraphQL App    # (optional) lambda description. default is en empty string.
   env:                           # (optional) env vars. default is an empty object
     TABLE: 'my-table'
-  policy:                        # (optionnal) policy statements to attach to the default lambda role. The default behavior is a strict policy that only has access to invoke your lambda and create CloudWatch Logs
-    - Action: '*'
-      Effect: Allow
-      Resource: '*'
   layers:                        # (optional) list of lambda layer arns to attach to your lambda function.
     - arn:aws:first:layer
     - arn:aws:second:layer
@@ -238,6 +235,7 @@ If you've purchased your domain from AWS Route53, you can configure the domain w
 
 ```yml
 inputs
+  src: ./
   domain: example.com
 ```
 
@@ -245,6 +243,7 @@ Subdomains work too:
 
 ```yml
 inputs
+  src: ./
   domain: api.example.com
 ```
 
@@ -258,6 +257,7 @@ The component creates the minimum required IAM policy based on your configuratio
 
 ```yml
 inputs:
+  src: ./src
   policy:
     - Action: '*'
       Effect: Allow
@@ -276,6 +276,7 @@ If you'd like to setup `IAM` authorization:
 
 ```yml
 inputs:
+  src: ./
   auth: IAM
 ```
 
@@ -283,6 +284,7 @@ For `Cognito`:
 
 ```yml
 inputs:
+  src: ./
   auth:
     userPoolId: qwertyuiop
     defaultAction: ALLOW
