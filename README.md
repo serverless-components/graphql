@@ -309,7 +309,7 @@ If you'd like to setup your resolvers to use your own existing data sources, you
 
 In that case, you'll need to also specify your own `request` and `response` VTL templates. You could do that directly in `serverless.yml`, or by pointing to a `vtl` file inside of your `src` directory.
 
-Here's an example:
+Here's an example using an existing lambda as a data source:
 
 ```yml
 inputs:
@@ -323,9 +323,7 @@ inputs:
         response: response.vtl      # you could also point to a VTL file relative to your src directory.
 ```
 
-This `request` and `response` properties are required regardless of which data source you are working with. Check out the [official AWS docs](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html) for more information on the required syntax for each data source.
-
-Below is a reference of all the supported data sources and their configuration. Don't forget to add the request/response templates as shown above.
+These `request` and `response` properties are required regardless of which data source you are working with, and they're different depending on your schema and your application requirements. Check out the [official AWS docs](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html) for more information on the required syntax for each data source.
 
 ## Lambda Resolvers
 
@@ -370,6 +368,27 @@ inputs:
     Query: 
       getPost:
         endpoint: https://search-my-sample-data-abbaabba.us-east-1.es.amazonaws.com
+        request: >
+          {
+              "version":"2017-02-28",
+              "operation":"GET",
+              "path":"/id/post/_search",
+              "params":{
+                  "headers":{},
+                  "queryString":{},
+                  "body":{
+                      "from":0,
+                      "size":50
+                  }
+              }
+          }
+         response: >
+          [
+              #foreach($entry in $context.result.hits.hits)
+              #if( $velocityCount > 1 ) , #end
+              $utils.toJson($entry.get("_source"))
+              #end
+          ]
 ```
 
 ## Relational Database Resolvers
@@ -384,6 +403,14 @@ inputs:
         awsSecretStoreArn: arn:aws:secretsmanager:us-east-1:123456789123:secret:rds-db-credentials/cluster-ABCDEFGHI/admin-aBc1e2
         databaseName: my-database
         schema: public
+        request: >
+          {
+              "version": "2018-05-29",
+                  "statements": [
+                      $util.toJson("select * from Posts WHERE id='$ctx.args.id'")
+              ]
+          }
+        response: '$utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])'
 ```
 
 # CLI Reference
