@@ -28,7 +28,7 @@ This Serverless Framework Component is a specialized developer experience focuse
   - [**Custom Domain**](#custom-domain)
   - [**Custom IAM Policies**](#custom-iam-policies)
   - [**Authorization**](#authorization)
-  - [**Resolvers and Data Sources**](#resolvers-and-data-sources)
+  - [**Data Sources Resolvers**](#=data-sources-resolvers)
 - [**CLI Reference**](#cli-reference)
 - [**Outputs Reference**](#outputs-reference)
 - [**FAQs**](#faqs)
@@ -303,9 +303,11 @@ inputs:
     iatTTL: 0
 ```
 
-## Resolvers and Data Sources
+## Data Sources Resolvers
 
-If you'd like to setup your resolvers to use your own existing data sources, you could specify your resolvers as a `serverless.yml` input instead of inside a `resolvers.js` file. In that case, you'll need to also specify your own `request` and `response` templates. You could do that directly in `serverless.yml`, or by pointing to a `vtl` file inside of your `src` directory.
+If you'd like to setup your resolvers to use your own existing data sources, you could specify your resolvers as a `serverless.yml` input instead of inside a `resolvers.js` file.
+
+In that case, you'll need to also specify your own `request` and `response` VTL templates. You could do that directly in `serverless.yml`, or by pointing to a `vtl` file inside of your `src` directory.
 
 Here's an example:
 
@@ -321,7 +323,7 @@ inputs:
         response: response.vtl      # you could also point to a VTL file relative to your src directory.
 ```
 
-This `request` and `response` properties are required regardless of which data source you are working with. [Check out the official AWS docs for more information on the syntax for each data source](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html).
+This `request` and `response` properties are required regardless of which data source you are working with. [Check out the official AWS docs for more information on the required syntax for each data source.](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html).
 
 Below is a reference of all the supported data sources and their configuration. Don't forget to add the request/response templates as shown above.
 
@@ -334,6 +336,8 @@ inputs:
     Query:                          
       getPost:                      
         lambda: my-lambda
+        request: '{ "version": "2017-02-28", "operation": "Invoke", "payload": $util.toJson($context)  }'
+        response: '$util.toJson($context.result)'
 ```
 
 
@@ -346,6 +350,15 @@ inputs:
     Query:                          
       getPost:                      
         table: my-table
+        request: >
+          {
+              "version" : "2017-02-28",
+              "operation" : "PutItem",
+              "key" : {
+                  "id" : $util.dynamodb.toDynamoDBJson($context.arguments.id)
+              },
+          }
+        response: '$util.toJson($context.result)'
 ```
 
 ## ElasticSearch Resolvers
