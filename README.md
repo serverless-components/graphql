@@ -25,11 +25,10 @@ This Serverless Framework Component is a specialized developer experience focuse
   - [**Query**](#query)
 - [**Configuration Reference**](#configuration-reference)
   - [**Lambda Configuration**](#lambda-resolvers)
-  - [**Custom Domain**](#lambda-resolvers)
-  - [**Custom Policies**](#lambda-resolvers)
-  - [**Authorization**](#dynamodb-resolvers)
-  - [**Resolvers & Data Sources**](#elasticsearch-resolvers)
-  - [**Outputs Reference**](#elasticsearch-resolvers)
+  - [**Custom Domain**](#custom-domain)
+  - [**Custom Policies**](#custom-policies)
+  - [**Authorization**](#authorization)
+  - [**Resolvers & Data Sources**](#resolvers-data-sources)
 - [**CLI Reference**](#cli-reference)
 - [**Outputs Reference**](#outputs-reference)
 - [**FAQs**](#faqs)
@@ -195,7 +194,7 @@ The response should be an echo of the post id, something like this:
 
 The GraphQL component is a zero configuration component, meaning that it'll work out of the box with no configuration and sane defaults. With that said, there are still a lot of optional configuration that you can specify.
 
-Here's a complete reference of the `serverless.yml` file for the GraphQL component:
+Here's a very minimal configuration to get you started. Most of these property are optional
 
 ```yml
 component: graphql               # (required) name of the component. In that case, it's graphql.
@@ -206,27 +205,16 @@ stage: dev                       # (optional) serverless dashboard stage. defaul
 
 inputs:
   src: ./                        # (optional) path to the source folder. default is a simple blogging app.
-  memory: 512                    # (optional) lambda memory size. default is 3008.
-  timeout: 10                    # (optional) lambda timeout. default is 300.
-  description: My GraphQL App    # (optional) lambda description. default is en empty string.
-  env:                           # (optional) env vars. default is an empty object
-    TABLE: 'my-table'
-  policy:                        # (optionnal) policy statement to attach to the lambda/appsync role. default is a strict policy that only has access to invoke your lambda and create CloudWatch Logs
-    - Action: '*'
-      Effect: Allow
-      Resource: '*'
-  layers:                        # (optional) list of lambda layer arns to attach to your lambda function.
-    - arn:aws:first:layer
-    - arn:aws:second:layer
-  domain: api.serverless.com     # (optional) if the domain was registered via AWS Route53 on the account you are deploying to, it will automatically be set-up with your GraphQL AppSync API, as well as a free CDN & AWS ACM SSL Cert.
   region: us-east-2              # (optional) aws region to deploy to. default is us-east-1.
 ```
 
-Once you've chosen your configuration, run `serverless deploy` again (or simply just `serverless`) to deploy your changes.
-  
-## Lambda Resolvers
+Even the `src` input is optionl. If you didn't specify any `src` directory containing your code, an example app will be deployed for you.
 
-If you specify resolvers in a `resolvers.js` file as shown above, the component will deploy a lambda function automatically for you to host your resolvers and connect everything together. You can configure this default lambda function with the following inputs:
+Keep reading to learn more about all the configuration options available to you.
+  
+## Lambda Configuration
+
+If you specify resolvers in a `resolvers.js` file as shown in the quick start above, the component will deploy a lambda function automatically for you to host your resolvers and connect everything together. You can configure this default lambda function with the following inputs:
 
 ```yml
 inputs:
@@ -243,6 +231,77 @@ inputs:
     - arn:aws:first:layer
     - arn:aws:second:layer
 ```
+
+## Custom Domain
+
+If you've purchased your domain from AWS Route53, you can configure the domain with a single input:
+
+```yml
+inputs
+  domain: example.com
+```
+
+Subdomains work too:
+
+```yml
+inputs
+  domain: api.example.com
+```
+
+This will create a a free SSL certificate for you with AWS ACM, deploy a CDN with AWS CloudFront, and setup all the DNS records required.
+
+If you've purchased your domain elsewhere, you'll have to manually create a Route53 hosted zone for your domain, and point to the AWS nameservers on your registrar before you add the `domain` input.
+
+## Custom IAM Policies
+
+The component creates the minimum required IAM policy based on your configuration. But you could always add your own policy statements using the `policy` input:
+
+```yml
+inputs:
+  policy:
+    - Action: '*'
+      Effect: Allow
+      Resource: '*'
+```
+
+This policy applies to both the built-in Lambda function and the AppSync API.
+
+Keep in mind that this component automatically adds the required IAM policies to invoke your data source depending on your configuration.
+
+## Authorization
+
+This component uses `apiKey` authorization by default. However all other AppSync authorization options are available via the `auth` input.
+
+If you'd like to setup `IAM` authorization:
+
+```yml
+inputs:
+  auth: IAM
+```
+
+For `Cognito`:
+
+```yml
+inputs:
+  auth:
+    userPoolId: qwertyuiop
+    defaultAction: ALLOW
+    region: us-east-1
+    appIdClientRegex: qwertyuiop
+```
+
+Finally, for `OpenID`:
+
+```yml
+inputs:
+  auth:
+    issuer: qwertyuiop
+    authTTL: 0
+    clientId: wertyuiop
+    iatTTL: 0
+```
+
+## Resolvers & Data Sources
 
 If you'd like to use your own Lambda data source, you could specify your resolvers as an input instead of a `resolvers.js` file, and point to your Lambda function. Here's an example resolver:
 
