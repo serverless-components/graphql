@@ -24,7 +24,7 @@ This Serverless Framework Component is a specialized developer experience focuse
   - [**Deploy**](#deploy)
   - [**Query**](#query)
 - [**Configuration Reference**](#configuration-reference)
-  - [**Lambda Configuration**](#lambda-resolvers)
+  - [**Lambda Configuration**](#lambda-configuration)
   - [**Custom Domain**](#custom-domain)
   - [**Custom IAM Policies**](#custom-iam-policies)
   - [**Authorization**](#authorization)
