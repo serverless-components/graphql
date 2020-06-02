@@ -194,7 +194,7 @@ The response should be an echo of the post id, something like this:
 
 The GraphQL component is a zero configuration component, meaning that it'll work out of the box with no configuration and sane defaults. With that said, there are still a lot of optional configuration that you can specify.
 
-Here's a very minimal configuration to get you started. Most of these property are optional
+Here's a very minimal configuration to get you started. Most of these properties are optional, but if you use them, remember to substitute with your own value if required (ie. the `org` property)
 
 ```yml
 component: graphql               # (required) name of the component. In that case, it's graphql.
