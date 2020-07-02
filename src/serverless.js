@@ -168,6 +168,14 @@ class GraphQL extends Component {
     // deploy role
     const { roleArn } = await aws.utils.deployRole(deployRoleParams)
 
+    // Add policy to the Lambda role to allow VPC CreateNetworkInterface
+    await new aws.IAM()
+      .attachRolePolicy({
+        RoleName: this.state.name,
+        PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+      })
+      .promise()
+
     // if there's a resolvers.js, then we should deploy the built in lambda
     if (shouldDeployLambda) {
       log(`Deploying Lambda "${this.state.name}" to the "${this.state.region}" region.`)
@@ -185,12 +193,10 @@ class GraphQL extends Component {
         lambdaName: this.state.name,
         description: inputs.description,
         handler,
-        memory: inputs.memory,
-        timeout: inputs.timeout,
-        env: inputs.env,
-        layers: inputs.layers,
         roleArn,
-        lambdaSrc: zipPath
+        lambdaSrc: zipPath,
+        region: inputs.region,
+        ...inputs.lambdaResolver
       }
       await aws.utils.deployLambda(deployLambdaParams)
     }
