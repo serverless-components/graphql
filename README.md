@@ -219,21 +219,20 @@ If you specify resolvers in a `resolvers.js` file as shown in the quick start ab
 ```yml
 inputs:
   src: ./
-  lambdaResolver:                  # (optional) additional parameters for built-in lambda.
-    description: My GraphQL App    # (optional) lambda description. default is en empty string.
-    memory: 512                    # (optional) lambda memory size. default is 3008.
-    timeout: 10                    # (optional) lambda timeout. default is 300.
-    env:                           # (optional) env vars. default is an empty object
-      TABLE: 'my-table'
-    layers:                        # (optional) list of lambda layer arns to attach to your lambda function.
-      - arn:aws:first:layer
-      - arn:aws:second:layer
-    vpcConfig:                     # (optional) specify a vpc
-      securityGroupIds:
-        - sg-xxx
-      subnetIds:
-        - subnet-xxx
-        - subnet-xxx
+  description: My GraphQL App    # (optional) lambda description. default is en empty string.
+  memory: 512                    # (optional) lambda memory size. default is 3008.
+  timeout: 10                    # (optional) lambda timeout. default is 300.
+  env:                           # (optional) env vars. default is an empty object
+    TABLE: 'my-table'
+  layers:                        # (optional) list of lambda layer arns to attach to your lambda function.
+    - arn:aws:first:layer
+    - arn:aws:second:layer
+  vpcConfig:                     # (optional) specify a vpc
+    securityGroupIds:
+      - sg-xxx
+    subnetIds:
+      - subnet-xxx
+      - subnet-xxx
 ```
 
 ## Custom Domain
