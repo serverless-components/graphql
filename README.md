@@ -24,6 +24,7 @@ This Serverless Framework Component is a specialized developer experience focuse
   - [**Deploy**](#deploy)
   - [**Query**](#query)
 - [**Configuration Reference**](#configuration-reference)
+  - [**Extend Existing API**](#extend-existing-api)
   - [**Lambda Configuration**](#lambda-configuration)
   - [**Custom Domain**](#custom-domain)
   - [**Custom IAM Policies**](#custom-iam-policies)
@@ -211,7 +212,19 @@ inputs:
 Even the `src` input is optional. If you didn't specify any `src` directory containing your code, an example app will be deployed for you.
 
 Keep reading to learn more about all the configuration options available to you.
-  
+
+## Extend Existing API
+
+If the `appId` input variable is provided this component will extending an existing AppSync API:
+
+```yml
+inputs:
+  src: ./
+  apiId: xxx                     # (optional) if provided will extend an existing api.
+```
+
+The `apiId` can be reference from the source component using the `apiId` output variable from the component instance that created the graphql API: `${output:[STAGE]:[APP]:[NAME].apiId}`
+
 ## Lambda Configuration
 
 If you specify resolvers in a `resolvers.js` file as shown in the quick start above, the component will deploy a lambda function automatically for you to host your resolvers and connect everything together. You can configure this default lambda function with the following inputs:
