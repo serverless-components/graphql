@@ -20,7 +20,7 @@ This Serverless Framework Component is a specialized developer experience focuse
 
 - [**Quick Start**](#quick-start)
   - [**Install**](#install)
-  - [**Create**](#create)
+  - [**Initialize**](#initialize)
   - [**Deploy**](#deploy)
   - [**Query**](#query)
 - [**Configuration Reference**](#configuration-reference)
@@ -43,16 +43,16 @@ To get started with this component, install the latest version of the Serverless
 npm install -g serverless
 ```
 
-## Create
+## Initialize
 
-You can easily create a new GraphQL app just by using the following command and template url.
+The easiest way to start using the graphql component is by initializing the `graphql-starter` template. Just run this command:
 
 ```
-serverless create --template-url https://github.com/serverless/components/tree/master/templates/graphql
-cd graphql
+serverless init graphql-starter
+cd graphql-starter
 ```
 
-Then, create a new `.env` file in the root of the `graphql` directory right next to `serverless.yml`, and add your AWS access keys:
+This will also run `npm install` for you, and create an empty `.env` file. Open that `.env` file and can add in your AWS credentials
 
 ```
 # .env
