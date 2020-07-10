@@ -53,7 +53,7 @@ serverless init graphql-starter
 cd graphql-starter
 ```
 
-This will also run `npm install` for you, and create an empty `.env` file. Open that `.env` file and can add in your AWS credentials
+This will also run `npm install` for you, and create an empty `.env` file. Open that `.env` file and add your AWS credentials
 
 ```
 # .env
