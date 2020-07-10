@@ -27,6 +27,18 @@ const checksum = (data) => {
 
 const log = (msg) => console.log(msg) // eslint-disable-line
 
+const getSchema = async (sourceDirectory, schemaFilename) => {
+  const schemaFilePath = path.join(sourceDirectory, schemaFilename)
+  const schemaFileExists = await fileExists(schemaFilePath)
+
+  // make sure schema file exists
+  if (!schemaFileExists) {
+    throw new Error(`The "${schemaFilename}" file was not found in your source directory`)
+  }
+
+  return fs.promises.readFile(path.join(sourceDirectory, schemaFilename), 'utf-8')
+}
+
 class GraphQL extends Component {
   async deploy(inputs = {}) {
     // this error message assumes that the user is running via the CLI though...
@@ -39,6 +51,13 @@ class GraphQL extends Component {
     inputs.name = inputs.name || this.name
     this.state.region = inputs.region
     this.state.name = this.state.name || `${inputs.name}-${generateId()}`
+
+    if (inputs.apiId) {
+      this.state.shouldDeployAppSync = false
+      this.state.apiId = inputs.apiId
+    } else {
+      this.state.shouldDeployAppSync = true
+    }
 
     aws.config.update({
       credentials: this.credentials.aws,
@@ -69,20 +88,14 @@ class GraphQL extends Component {
       )
     }
 
-    const schemaFilePath = path.join(sourceDirectory, 'schema.graphql')
-    const schemaFileExists = await fileExists(schemaFilePath)
+    const schema = this.state.shouldDeployAppSync
+      ? await getSchema(sourceDirectory, 'schema.graphql')
+      : null
+
+    log(`Deploying "${this.state.name}" to the "${this.state.region}" region.`)
 
     const resolversFilePath = path.join(sourceDirectory, 'resolvers.js')
     const resolversFileExists = await fileExists(resolversFilePath)
-
-    // make sure schema.graphql file exists
-    if (!schemaFileExists) {
-      throw new Error(`The "schema.graphql" file was not found in your source directory`)
-    }
-
-    const schema = await fs.promises.readFile(path.join(sourceDirectory, 'schema.graphql'), 'utf-8')
-
-    log(`Deploying GraphQL API "${this.state.name}" to the "${this.state.region}" region.`)
 
     inputs.resolvers = inputs.resolvers || {}
     let shouldDeployLambda = false
@@ -208,36 +221,45 @@ class GraphQL extends Component {
       await aws.utils.deployLambda(deployLambdaParams)
     }
 
-    log(`Deploying AppSync API "${this.state.name}" to the "${this.state.region}" region.`)
-    const deployAppSyncApiParams = {
-      apiName: this.state.name,
-      auth: inputs.auth
+    const outputs = {
+      name: this.state.name,
+      apiId: this.state.apiId
     }
 
-    if (this.state.apiId) {
-      deployAppSyncApiParams.apiId = this.state.apiId
-    }
-
-    const { apiId, apiUrls } = await aws.utils.deployAppSyncApi(deployAppSyncApiParams)
-    this.state.apiId = apiId
-    this.state.apiUrls = apiUrls
-
-    const schemaChecksum = checksum(schema)
-    if (schemaChecksum !== this.state.schemaChecksum) {
-      log(`Deploying schema for AppSync API with ID "${apiId}".`)
-      const deployAppSyncSchemaParams = {
-        apiId,
-        schema
+    if (this.state.shouldDeployAppSync) {
+      log(`Deploying AppSync API "${this.state.name}" to the "${this.state.region}" region.`)
+      const deployAppSyncApiParams = {
+        apiName: this.state.name,
+        auth: inputs.auth
       }
-      await aws.utils.deployAppSyncSchema(deployAppSyncSchemaParams)
-      this.state.schemaChecksum = schemaChecksum
+
+      if (this.state.apiId) {
+        deployAppSyncApiParams.apiId = this.state.apiId
+      }
+
+      const { apiId, apiUrls } = await aws.utils.deployAppSyncApi(deployAppSyncApiParams)
+      this.state.apiId = apiId
+      this.state.apiUrls = apiUrls
+      outputs.apiId = apiId
+      outputs.url = apiUrls.GRAPHQL // there's also REALTIME URL. dont know what that is
+
+      const schemaChecksum = checksum(schema)
+      if (schemaChecksum !== this.state.schemaChecksum) {
+        log(`Deploying schema for AppSync API with ID "${apiId}".`)
+        const deployAppSyncSchemaParams = {
+          apiId,
+          schema
+        }
+        await aws.utils.deployAppSyncSchema(deployAppSyncSchemaParams)
+        this.state.schemaChecksum = schemaChecksum
+      }
     }
 
     const resolversChecksum = checksum(JSON.stringify(inputs.resolvers))
     if (resolversChecksum !== this.state.resolversChecksum) {
-      log(`Deploying resolvers for AppSync API with ID "${apiId}".`)
+      log(`Deploying resolvers for AppSync API with ID "${this.state.apiId}".`)
       const deployAppSyncResolversParams = {
-        apiId,
+        apiId: this.state.apiId,
         roleName: this.state.name,
         resolvers: inputs.resolvers
       }
@@ -245,20 +267,14 @@ class GraphQL extends Component {
       this.state.resolversChecksum = resolversChecksum
     }
 
-    const outputs = {
-      name: this.state.name,
-      apiId: this.state.apiId,
-      url: this.state.apiUrls.GRAPHQL // there's also REALTIME URL. dont know what that is
-    }
-
     // deploy api key if auth config is api key
-    if (!inputs.auth || inputs.auth === 'apiKey') {
-      log(`Deploying api key for AppSync API with ID "${apiId}".`)
+    if ((!inputs.auth || inputs.auth === 'apiKey') && this.state.shouldDeployAppSync) {
+      log(`Deploying api key for AppSync API with ID "${this.state.apiId}".`)
       // if api key not in state, a new one will be created
       // if it is in state, it will be verified on the provider
       // and a new one will be created if no longer exists
       const deployAppSyncApiKeyParams = {
-        apiId,
+        apiId: this.state.apiId,
         apiKey: this.state.apiKey,
         description: inputs.description
       }
@@ -269,12 +285,12 @@ class GraphQL extends Component {
     }
 
     // deploy distribution and domain if configured
-    if (inputs.domain) {
+    if (inputs.domain && this.state.shouldDeployAppSync) {
       log(
         `Deploying CloudFront Distribution for AppSync API with URL "${this.state.apiUrls.GRAPHQL}".`
       )
       const deployAppSyncDistributionParams = {
-        apiId,
+        apiId: this.state.apiId,
         apiUrl: this.state.apiUrls.GRAPHQL,
         domain: inputs.domain
       }
@@ -302,9 +318,7 @@ class GraphQL extends Component {
     // so that we could remove it if we have to later on
     this.state.shouldDeployLambda = shouldDeployLambda
 
-    log(
-      `GraphQL API ${this.state.name} was successfully deployed to the "${this.state.region}" region.`
-    )
+    log(`Successfully deployed "${this.state.name}" to the "${this.state.region}" region.`)
 
     return outputs
   }
@@ -333,13 +347,16 @@ class GraphQL extends Component {
 
     log(`Removing Role "${this.state.name}" from the "${this.state.region}" region.`)
     log(`Removing Lambda "${this.state.name}" from the "${this.state.region}" region.`)
-    log(`Removing AppSync API "${this.state.apiId}" from the "${this.state.region}" region.`)
 
     const promises = [
       aws.utils.deleteRole(deleteRoleParams),
-      aws.utils.deleteLambda(deleteLambdaParams),
-      aws.utils.deleteAppSyncApi(deleteAppSyncApiParams)
+      aws.utils.deleteLambda(deleteLambdaParams)
     ]
+
+    if (this.state.shouldDeployAppSync) {
+      log(`Removing AppSync API "${this.state.apiId}" from the "${this.state.region}" region.`)
+      promises.push(aws.utils.deleteAppSyncApi(deleteAppSyncApiParams))
+    }
 
     if (this.state.domain) {
       log(
@@ -356,9 +373,7 @@ class GraphQL extends Component {
 
     await Promise.all(promises)
 
-    log(
-      `GraphQL API ${this.state.name} was successfully removed from the "${this.state.region}" region.`
-    )
+    log(`Successfully removed "${this.state.name}" from the "${this.state.region}" region.`)
 
     this.state = {}
   }
