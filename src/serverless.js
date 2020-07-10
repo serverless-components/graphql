@@ -152,6 +152,18 @@ class GraphQL extends Component {
           Effect: 'Allow',
           Action: ['logs:CreateLogGroup', 'logs:CreateLogStream'],
           Resource: '*'
+        },
+        {
+          Effect: 'Allow',
+          Action: [
+            'logs:CreateLogGroup',
+            'logs:CreateLogStream',
+            'logs:PutLogEvents',
+            'ec2:CreateNetworkInterface',
+            'ec2:DescribeNetworkInterfaces',
+            'ec2:DeleteNetworkInterface'
+          ],
+          Resource: '*'
         }
       ]
     }
@@ -189,6 +201,7 @@ class GraphQL extends Component {
         timeout: inputs.timeout,
         env: inputs.env,
         layers: inputs.layers,
+        vpcConfig: inputs.vpcConfig,
         roleArn,
         lambdaSrc: zipPath
       }
