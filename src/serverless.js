@@ -2,7 +2,7 @@ const path = require('path')
 const crypto = require('crypto')
 const fs = require('fs')
 const { Component } = require('@serverless/core')
-const aws = require('@serverless/aws-sdk')
+const AWS = require('@serverless/aws-sdk-extra')
 
 const generateId = () =>
   Math.random()
@@ -59,7 +59,7 @@ class GraphQL extends Component {
       this.state.shouldDeployAppSync = true
     }
 
-    aws.config.update({
+    const extras = new AWS.Extras({
       credentials: this.credentials.aws,
       region: inputs.region
     })
@@ -192,7 +192,7 @@ class GraphQL extends Component {
     }
 
     // get the minimum policy needed for the defined resolvers
-    const resolversPolicy = await aws.utils.getAppSyncResolversPolicy(inputs.resolvers)
+    const resolversPolicy = await extras.getAppSyncResolversPolicy(inputs.resolvers)
     deployRoleParams.policy = deployRoleParams.policy.concat(resolversPolicy)
 
     // add any other policy statements provided by the user
@@ -201,7 +201,7 @@ class GraphQL extends Component {
     }
 
     // deploy role
-    const { roleArn } = await aws.utils.deployRole(deployRoleParams)
+    const { roleArn } = await extras.deployRole(deployRoleParams)
 
     // if there's a resolvers.js, then we should deploy the built in lambda
     if (shouldDeployLambda) {
@@ -228,7 +228,7 @@ class GraphQL extends Component {
         roleArn,
         lambdaSrc: zipPath
       }
-      await aws.utils.deployLambda(deployLambdaParams)
+      await extras.deployLambda(deployLambdaParams)
     }
 
     const outputs = {
@@ -247,7 +247,7 @@ class GraphQL extends Component {
         deployAppSyncApiParams.apiId = this.state.apiId
       }
 
-      const { apiId, apiUrls } = await aws.utils.deployAppSyncApi(deployAppSyncApiParams)
+      const { apiId, apiUrls } = await extras.deployAppSyncApi(deployAppSyncApiParams)
       this.state.apiId = apiId
       this.state.apiUrls = apiUrls
       outputs.apiId = apiId
@@ -260,7 +260,7 @@ class GraphQL extends Component {
           apiId,
           schema
         }
-        await aws.utils.deployAppSyncSchema(deployAppSyncSchemaParams)
+        await extras.deployAppSyncSchema(deployAppSyncSchemaParams)
         this.state.schemaChecksum = schemaChecksum
       }
     }
@@ -273,7 +273,7 @@ class GraphQL extends Component {
         roleName: this.state.name,
         resolvers: inputs.resolvers
       }
-      await aws.utils.deployAppSyncResolvers(deployAppSyncResolversParams)
+      await extras.deployAppSyncResolvers(deployAppSyncResolversParams)
       this.state.resolversChecksum = resolversChecksum
     }
 
@@ -288,7 +288,7 @@ class GraphQL extends Component {
         apiKey: this.state.apiKey,
         description: inputs.description
       }
-      const { apiKey } = await aws.utils.deployAppSyncApiKey(deployAppSyncApiKeyParams)
+      const { apiKey } = await extras.deployAppSyncApiKey(deployAppSyncApiKeyParams)
       this.state.apiKey = apiKey
 
       outputs.apiKey = apiKey
@@ -308,7 +308,7 @@ class GraphQL extends Component {
       if (this.state.distributionId) {
         deployAppSyncDistributionParams.distributionId = this.state.distributionId
       }
-      const { distributionId, distributionUrl } = await aws.utils.deployAppSyncDistribution(
+      const { distributionId, distributionUrl } = await extras.deployAppSyncDistribution(
         deployAppSyncDistributionParams
       )
 
@@ -321,7 +321,7 @@ class GraphQL extends Component {
     // remove default lambda if no longer configured
     if (!shouldDeployLambda && this.state.shouldDeployLambda) {
       log(`Removing Lambda "${this.state.name}" from the "${this.state.region}" region.`)
-      await aws.utils.deleteLambda({ lambdaName: this.state.name })
+      await extras.removeLambda({ lambdaName: this.state.name })
     }
 
     // keep in state the fact that we deployed a lambda
@@ -338,34 +338,32 @@ class GraphQL extends Component {
       log(`State is empty. Aborting removal.`)
       return
     }
-    aws.config.update({
+
+    const extras = new AWS.Extras({
       credentials: this.credentials.aws,
       region: this.state.region || 'us-east-1'
     })
 
-    const deleteRoleParams = {
+    const removeRoleParams = {
       roleName: this.state.name
     }
 
-    const deleteLambdaParams = {
+    const removeLambdaParams = {
       lambdaName: this.state.name
     }
 
-    const deleteAppSyncApiParams = {
+    const removeAppSyncApiParams = {
       apiId: this.state.apiId
     }
 
     log(`Removing Role "${this.state.name}" from the "${this.state.region}" region.`)
     log(`Removing Lambda "${this.state.name}" from the "${this.state.region}" region.`)
 
-    const promises = [
-      aws.utils.deleteRole(deleteRoleParams),
-      aws.utils.deleteLambda(deleteLambdaParams)
-    ]
+    const promises = [extras.removeRole(removeRoleParams), extras.removeLambda(removeLambdaParams)]
 
     if (this.state.shouldDeployAppSync) {
       log(`Removing AppSync API "${this.state.apiId}" from the "${this.state.region}" region.`)
-      promises.push(aws.utils.deleteAppSyncApi(deleteAppSyncApiParams))
+      promises.push(extras.removeAppSyncApi(removeAppSyncApiParams))
     }
 
     if (this.state.domain) {
@@ -378,7 +376,7 @@ class GraphQL extends Component {
         domain: this.state.domain
       }
 
-      promises.push(aws.utils.removeDistribution(removeDistribution))
+      promises.push(extras.removeDistribution(removeDistribution))
     }
 
     await Promise.all(promises)
