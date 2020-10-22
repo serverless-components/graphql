@@ -1,0 +1,6 @@
+name: graphql-starter
+org: serverlessinc
+description: Deploys an serverless GraphQL API with AWS AppSync
+keywords: aws, serverless, graphql, appsync
+repo: https://github.com/serverless-components/graphql
+license: MIT
