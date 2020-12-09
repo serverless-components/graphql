@@ -148,6 +148,16 @@ class GraphQL extends Component {
             )
           }
         }
+        if (resolver.response) {
+          const responseTemplateAbsolutePath = path.resolve(sourceDirectory, resolver.response)
+
+          if (await fileExists(responseTemplateAbsolutePath)) {
+            inputs.resolvers[type][field].response = await fs.promises.readFile(
+              responseTemplateAbsolutePath,
+              'utf-8'
+            )
+          }
+        }
       }
     }
 
