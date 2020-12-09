@@ -1,10 +1,10 @@
-name: graphql
-version: 2.1.0
-author: eahefnawy
-org: serverlessinc
-description: Create a GraphQL API with AWS AppSync
+name: medcloud-graphql
+version: 2.2.0
+author: medcloud
+org: medcloud
+description: Fork of graphql component
 keywords: aws, serverless, appsync, graphql
-repo: https://github.com/owner/project
+repo: https://github.com/medcloudbr/graphql
 readme: ''
 license: MIT
 main: ./src
