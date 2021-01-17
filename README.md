@@ -215,7 +215,7 @@ Keep reading to learn more about all the configuration options available to you.
 
 ## Extend Existing API
 
-If the `appId` input variable is provided this component will extending an existing AppSync API:
+If the `appId` input variable is provided this component will extend an existing AppSync API:
 
 ```yml
 inputs:
