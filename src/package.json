@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@serverless/aws-sdk-extra": "^1.0.0"
+    "@serverless/aws-sdk-extra": "^1.2.5"
   }
 }
