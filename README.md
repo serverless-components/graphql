@@ -44,6 +44,8 @@ To get started with this component, install the latest version of the Serverless
 npm install -g serverless
 ```
 
+After installation, make sure you connect your AWS account by setting a provider in the org setting page on the [Serverless Dashboard](https://app.serverless.com).
+
 ## Initialize
 
 The easiest way to start using the graphql component is by initializing the `graphql-starter` template. Just run this command:
@@ -53,19 +55,10 @@ serverless init graphql-starter
 cd graphql-starter
 ```
 
-This will also run `npm install` for you, and create an empty `.env` file. Open that `.env` file and add your AWS credentials
-
-```
-# .env
-AWS_ACCESS_KEY_ID=XXX
-AWS_SECRET_ACCESS_KEY=XXX
-```
-
-You should now have a directory that looks something like this:
+This will also run `npm install` for you. You should now have a directory that looks something like this:
 
 ```
 |- serverless.yml
-|- .env
 |- schema.graphql
 |- resolvers.js
 ```
