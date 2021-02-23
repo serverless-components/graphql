@@ -1,5 +1,5 @@
 name: graphql
-version: 3.0.3
+version: 3.0.4
 author: eahefnawy
 org: serverlessinc
 description: Create a GraphQL API with AWS AppSync
@@ -8,3 +8,7 @@ repo: https://github.com/owner/project
 readme: ''
 license: MIT
 main: ./src
+
+types:
+  providers:
+    - aws
